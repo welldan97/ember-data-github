@@ -2,15 +2,17 @@ import DS from 'ember-data';
 import Ember from 'ember';
 
 export default DS.RESTSerializer.extend({
-  extractArray: function(store, primaryType, payload) {
+  normalizeArrayResponse: function(store, primaryModelClass, payload) {
+    var pluralTypeKey = Ember.Inflector.inflector.pluralize(primaryModelClass.modelName);
     var wrappedPayload = {};
-    wrappedPayload[Ember.String.pluralize(primaryType.typeKey)] = payload;
-    return this._super(store, primaryType, wrappedPayload);
+    wrappedPayload[pluralTypeKey] = payload;
+    return this._super(store, primaryModelClass, wrappedPayload);
   },
-  extractSingle: function(store, primaryType, payload, recordId) {
+  normalizeSingleResponse: function(store, primaryModelClass, payload, recordId) {
+    var pluralTypeKey = Ember.Inflector.inflector.pluralize(primaryModelClass.modelName);
     payload.recordId = recordId;
     var wrappedPayload = {};
-    wrappedPayload[primaryType.typeKey] = payload;
-    return this._super(store, primaryType, wrappedPayload, recordId);
+    wrappedPayload[pluralTypeKey] = payload;
+    return this._super(store, primaryModelClass, wrappedPayload, recordId);
   }
 });
